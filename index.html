@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loop Calculator — Metcal Technologies</title>
+<style>
+  :root{
+    --navy:#0f2942; --blue:#1a5f9e; --accent:#2f8fd0;
+    --bg:#f4f7fa; --card:#fff; --border:#d9e2ec;
+    --text:#1c2b39; --muted:#5b7083; --warn:#b45309; --warnbg:#fffbeb;
+    --ok:#166534; --okbg:#f0fdf4; --bad:#b91c1c; --badbg:#fef2f2;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       background:var(--bg);color:var(--text);padding:24px;}
+  .wrap{max-width:1000px;margin:0 auto;}
+  .brand{font-size:20px;font-weight:800;color:var(--blue);letter-spacing:.02em;margin-bottom:14px;}
+  header h1{font-size:21px;margin:0 0 4px;color:var(--navy);}
+  header p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.55;}
+  .tabs{display:flex;gap:6px;margin:18px 0 0;flex-wrap:wrap;}
+  .tab{background:#fff;border:1px solid var(--border);border-bottom:none;border-radius:8px 8px 0 0;
+       padding:10px 16px;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;}
+  .tab[aria-selected="true"]{color:var(--navy);background:var(--card);box-shadow:0 -2px 0 var(--blue) inset;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;
+        padding:20px;margin-bottom:18px;box-shadow:0 1px 2px rgba(15,41,66,.04);}
+  .tabs + .card{border-top-left-radius:0;}
+  .card h2{font-size:14px;margin:0 0 14px;color:var(--navy);}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;}
+  .field{flex:1;min-width:140px;}
+  label{display:block;font-size:11px;font-weight:700;color:var(--muted);
+        margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em;}
+  input,select{width:100%;padding:10px 12px;border:1px solid var(--border);
+               border-radius:8px;font-size:15px;background:#fff;color:var(--text);}
+  input:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px;}
+  .btn{background:var(--blue);color:#fff;border:none;padding:11px 22px;border-radius:8px;
+       font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;}
+  .btn:hover{background:var(--navy);}
+  .btn2{background:#fff;color:var(--blue);border:1px solid var(--border);}
+  .btn2:hover{background:#eaf3fb;}
+  table{width:100%;border-collapse:collapse;min-width:560px;}
+  .tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  th,td{padding:9px 10px;text-align:left;font-size:13.5px;border-bottom:1px solid var(--border);vertical-align:middle;}
+  th{color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;font-weight:700;}
+  td.num{font-variant-numeric:tabular-nums;}
+  td.big{font-weight:700;color:var(--navy);font-size:15px;}
+  td input{padding:7px 8px;font-size:13.5px;}
+  .note{font-size:12px;color:var(--muted);margin-top:14px;line-height:1.55;}
+  .hint{font-size:12px;color:var(--muted);line-height:1.55;margin:12px 0 0;}
+  .out{display:flex;gap:12px;flex-wrap:wrap;margin-top:4px;}
+  .kpi{flex:1;min-width:150px;background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+  .kpi .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700;}
+  .kpi .v{font-size:22px;font-weight:800;color:var(--navy);margin-top:4px;font-variant-numeric:tabular-nums;}
+  .kpi .s{font-size:11.5px;color:var(--muted);margin-top:2px;}
+  .pill{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:20px;}
+  .pass{background:var(--okbg);color:var(--ok);} .fail{background:var(--badbg);color:var(--bad);}
+  .warnbox{background:var(--warnbg);border:1px solid #fde68a;color:var(--warn);
+           padding:12px 14px;border-radius:8px;font-size:13px;line-height:1.55;margin-top:14px;}
+  .okbox{background:var(--okbg);border:1px solid #bbf7d0;color:var(--ok);
+         padding:12px 14px;border-radius:8px;font-size:13px;line-height:1.55;margin-top:14px;}
+  footer{font-size:11px;color:var(--muted);text-align:center;margin-top:26px;line-height:1.6;}
+  .hide{display:none;}
+  .pair{display:flex;gap:14px;align-items:stretch;}
+  .side{flex:1;min-width:250px;border:1px solid var(--border);border-radius:10px;padding:14px 14px 4px;background:#fbfdff;}
+  .side h3{margin:0 0 3px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--blue);}
+  .side .sub{font-size:11.5px;color:var(--muted);margin:0 0 12px;padding-bottom:9px;border-bottom:1px solid var(--border);}
+  .side .field{min-width:104px;}
+  .mid{flex:0 0 180px;display:flex;flex-direction:column;justify-content:center;gap:10px;}
+  .mid .field{flex:0 0 auto;}
+  .mid .arrow{text-align:center;font-size:20px;color:var(--muted);line-height:1;}
+  .summary{margin-top:14px;padding:12px 14px;background:#f8fafc;border:1px solid var(--border);
+           border-radius:10px;font-size:14px;color:var(--navy);font-weight:600;font-variant-numeric:tabular-nums;}
+  .summary span{color:var(--muted);font-weight:400;}
+  @media(max-width:760px){.pair{flex-direction:column;}.mid{flex:1 1 auto;}.mid .arrow{transform:rotate(90deg);}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">METCAL TECHNOLOGIES</div>
+  <header>
+    <h1>Loop Calculator — 4&ndash;20&nbsp;mA &amp; Process Signals</h1>
+    <p>Signal/process conversion, five-point calibration, loop compliance and sensor simulation.
+       Thermocouple values follow NIST ITS-90; RTD values follow IEC&nbsp;60751.</p>
+  </header>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true"  onclick="showTab('t1',this)">Signal &amp; process</button>
+    <button class="tab" role="tab" aria-selected="false" onclick="showTab('t2',this)">5-point calibration</button>
+    <button class="tab" role="tab" aria-selected="false" onclick="showTab('t3',this)">Loop power</button>
+    <button class="tab" role="tab" aria-selected="false" onclick="showTab('t4',this)">Sensor (TC / RTD)</button>
+  </div>
+  <!-- ============ TAB 1 : SIGNAL & PROCESS ============ -->
+  <div class="card" id="t1">
+    <h2>Process variable &harr; signal</h2>
+    <div class="pair">
+      <div class="side">
+        <h3>Process variable</h3><p class="sub">what the instrument measures</p>
+        <div class="row" style="margin-bottom:12px;">
+          <div class="field"><label for="eu">Engineering unit</label><input id="eu" value="kPa" oninput="calc1()"></div>
+          <div class="field"><label for="lrv">LRV (0 %)</label><input type="number" step="any" id="lrv" value="0" oninput="calc1()"></div>
+          <div class="field"><label for="urv">URV (100 %)</label><input type="number" step="any" id="urv" value="250" oninput="calc1()"></div>
+        </div>
+        <div class="row" style="margin-bottom:12px;">
+          <div class="field"><label for="inPv">Value</label><input type="number" step="any" id="inPv" placeholder="e.g. 125" oninput="calc1('pv')"></div>
+          <div class="field"><label for="inPct">% of measuring span</label><input type="number" step="any" id="inPct" placeholder="e.g. 50" oninput="calc1('pct')"></div>
+        </div>
+      </div>
+
+      <div class="mid">
+        <div class="field"><label for="mode">Transfer function</label>
+          <select id="mode" onchange="calc1()">
+            <option value="lin" selected>Linear</option>
+            <option value="sqrt">Square root</option>
+          </select></div>
+        <div class="arrow">&#8646;</div>
+        <div class="field" id="cutWrap" style="display:none;"><label for="cut">Low-flow cutoff (%)</label>
+          <input type="number" step="any" id="cut" value="0" oninput="calc1()"></div>
+      </div>
+
+      <div class="side">
+        <h3>Signal</h3><p class="sub">what the transmitter outputs</p>
+        <div class="row" style="margin-bottom:12px;">
+          <div class="field"><label for="sig">Signal range</label>
+            <select id="sig" onchange="calc1()">
+              <option value="4-20mA" selected>4&ndash;20 mA</option>
+              <option value="0-20mA">0&ndash;20 mA</option>
+              <option value="1-5V">1&ndash;5 V</option>
+              <option value="0-5V">0&ndash;5 V</option>
+              <option value="0-10V">0&ndash;10 V</option>
+              <option value="3-15psi">3&ndash;15 psi</option>
+            </select></div>
+        </div>
+        <div class="row" style="margin-bottom:12px;">
+          <div class="field"><label for="inSig">Value</label><input type="number" step="any" id="inSig" placeholder="e.g. 12" oninput="calc1('sig')"></div>
+          <div class="field"><label for="inSigPct">% of output span</label><input type="number" step="any" id="inSigPct" placeholder="e.g. 50" oninput="calc1('sigpct')"></div>
+        </div>
+      </div>
+    </div>
+    <div class="summary" id="sum1"></div>
+    <p class="hint">Type in any one box &mdash; the rest follow. With a linear transfer function the two &ldquo;% of span&rdquo; figures are equal; with square root they are not, which is the whole point of the setting.</p>
+
+    <h2 style="margin-top:22px;">Error at this point</h2>
+    <div class="row">
+      <div class="field"><label for="actSig">Actual signal read</label><input type="number" step="any" id="actSig" placeholder="e.g. 12.08" oninput="calc1()"></div>
+      <div class="field"><label for="tol1">Tolerance (% span)</label><input type="number" step="any" id="tol1" value="0.5" oninput="calc1()"></div>
+    </div>
+    <div class="out" id="k1e"></div>
+    <p class="note">% of span uses the full output span. % of reading uses the process value at that point, so it grows without limit near the bottom of the range &mdash; below about 10 % of span it is rarely a meaningful way to state error.</p>
+  </div>
+
+  <!-- ============ TAB 2 : 5-POINT ============ -->
+  <div class="card hide" id="t2">
+    <h2>Five-point calibration &mdash; as found / as left</h2>
+    <div class="row" style="margin-bottom:14px;">
+      <div class="field"><label for="tol2">Tolerance (% span)</label><input type="number" step="any" id="tol2" value="0.5" oninput="calc2()"></div>
+      <div class="field"><label>Signal / range</label><input id="rangeEcho" disabled></div>
+      <div class="field" style="flex:0 0 auto;"><button class="btn btn2" onclick="clearSheet()">Clear readings</button></div>
+    </div>
+    <div class="tablewrap">
+      <table id="sheet">
+        <thead><tr>
+          <th>% span</th><th>Process</th><th>Ideal</th>
+          <th>As found &uarr;</th><th>As found &darr;</th><th>As left &uarr;</th><th>As left &darr;</th><th>Max err (% span)</th><th></th>
+        </tr></thead>
+        <tbody id="sheetBody"></tbody>
+      </table>
+    </div>
+    <div class="out" id="k2" style="margin-top:16px;"></div>
+    <div id="v2"></div>
+    <p class="note">Hysteresis is the largest up/down difference at the same point. Linearity here is the largest deviation from the ideal straight line across the as-left up run. Repeatability needs repeat runs and is not derived from a single up/down pair.</p>
+  </div>
+
+  <!-- ============ TAB 3 : LOOP POWER ============ -->
+  <div class="card hide" id="t3">
+    <h2>Loop compliance &amp; burden</h2>
+    <div class="row" style="margin-bottom:12px;">
+      <div class="field"><label for="vs">Supply voltage (V)</label><input type="number" step="any" id="vs" value="24" oninput="calc3()"></div>
+      <div class="field"><label for="vt">Transmitter min. operating (V)</label><input type="number" step="any" id="vt" value="12" oninput="calc3()"></div>
+      <div class="field"><label for="imax">Max loop current (mA)</label><input type="number" step="any" id="imax" value="22" oninput="calc3()"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label for="rsense">Sense / load resistor (&#937;)</label><input type="number" step="any" id="rsense" value="250" oninput="calc3()"></div>
+      <div class="field"><label for="rwire">Wiring resistance (&#937;)</label><input type="number" step="any" id="rwire" value="10" oninput="calc3()"></div>
+      <div class="field"><label for="rother">Other devices (&#937;)</label><input type="number" step="any" id="rother" value="0" oninput="calc3()"></div>
+      <div class="field"><label for="hart">HART on this loop</label>
+        <select id="hart" onchange="calc3()"><option value="1" selected>Yes</option><option value="0">No</option></select></div>
+    </div>
+    <div class="out" id="k3" style="margin-top:16px;"></div>
+    <div id="v3"></div>
+    <p class="note">Maximum load = (supply &minus; transmitter minimum) &divide; maximum loop current. Sizing at 20 mA alone leaves no headroom for over-range or alarm currents, so the default checks 22 mA.</p>
+  </div>
+
+  <!-- ============ TAB 4 : SENSOR ============ -->
+  <div class="card hide" id="t4">
+    <h2>Sensor simulation &mdash; thermocouple &amp; RTD</h2>
+    <div class="row" style="margin-bottom:12px;">
+      <div class="field"><label for="sensor">Sensor</label>
+        <select id="sensor" onchange="calc4()">
+          <option value="K" selected>Thermocouple type K</option>
+          <option value="J">Thermocouple type J</option>
+          <option value="T">Thermocouple type T</option>
+          <option value="E">Thermocouple type E</option>
+          <option value="N">Thermocouple type N</option>
+          <option value="PT100">RTD Pt100 (&alpha; 0.00385)</option>
+          <option value="PT1000">RTD Pt1000 (&alpha; 0.00385)</option>
+        </select></div>
+      <div class="field" id="cjWrap"><label for="cj">Cold junction (&deg;C)</label><input type="number" step="any" id="cj" value="25" oninput="calc4()"></div>
+      <div class="field"><label for="sLrv">Transmitter LRV (&deg;C)</label><input type="number" step="any" id="sLrv" value="0" oninput="calc4()"></div>
+      <div class="field"><label for="sUrv">Transmitter URV (&deg;C)</label><input type="number" step="any" id="sUrv" value="200" oninput="calc4()"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label for="sT">Temperature (&deg;C)</label><input type="number" step="any" id="sT" placeholder="e.g. 150" oninput="calc4('t')"></div>
+      <div class="field"><label for="sOut" id="sOutLbl">Output (mV)</label><input type="number" step="any" id="sOut" placeholder="e.g. 6.138" oninput="calc4('o')"></div>
+    </div>
+    <div class="out" id="k4" style="margin-top:16px;"></div>
+    <p class="note" id="n4"></p>
+  </div>
+
+  <footer>
+    Reference tool only &mdash; confirm against the instrument manual and the applicable standard.<br>
+    Thermocouple reference functions: NIST ITS-90. RTD: IEC 60751 Callendar&ndash;Van Dusen, &alpha;&nbsp;=&nbsp;0.003851.<br>
+    Metcal Technologies (M) Sdn. Bhd.
+  </footer>
+</div>
+<script>
+/* ---- signal ranges ---- */
+const SIG={
+ '4-20mA':{lo:4,hi:20,u:'mA',live:true},
+ '0-20mA':{lo:0,hi:20,u:'mA',live:false},
+ '1-5V':{lo:1,hi:5,u:'V',live:true},
+ '0-5V':{lo:0,hi:5,u:'V',live:false},
+ '0-10V':{lo:0,hi:10,u:'V',live:false},
+ '3-15psi':{lo:3,hi:15,u:'psi',live:true}
+};
+/* ---- transfer ---- */
+function pvToPct(pv,lrv,urv){return (pv-lrv)/(urv-lrv);}
+function pctToPv(p,lrv,urv){return lrv+p*(urv-lrv);}
+function xfer(p,mode){ if(mode==='sqrt') return p<=0?0:Math.sqrt(p); return p; }
+function xferInv(p,mode){ if(mode==='sqrt') return p<=0?0:p*p; return p; }
+function pctToSig(p,s){return SIG[s].lo+p*(SIG[s].hi-SIG[s].lo);}
+function sigToPct(v,s){return (v-SIG[s].lo)/(SIG[s].hi-SIG[s].lo);}
+
+/* ---- RTD: IEC 60751 / Callendar-Van Dusen ---- */
+const RA=3.9083e-3, RB=-5.775e-7, RC=-4.183e-12;
+function rtdR(t,r0){ return t>=0 ? r0*(1+RA*t+RB*t*t) : r0*(1+RA*t+RB*t*t+RC*(t-100)*t*t*t); }
+function rtdT(r,r0){
+ if(r>=r0){ const d=RA*RA-4*RB*(1-r/r0); return (-RA+Math.sqrt(d))/(2*RB); }
+ return bisect(t=>rtdR(t,r0)-r,-200,0);
+}
+function bisect(f,a,b){ let fa=f(a); for(let i=0;i<200;i++){ const m=(a+b)/2, fm=f(m); if(fa*fm<=0){b=m;}else{a=m;fa=fm;} } return (a+b)/2; }
+
+/* ---- thermocouples: NIST ITS-90, t(degC) -> E(mV) ---- */
+const TC={
+ K:{min:-270,max:1372,segs:[
+   {lo:-270,hi:0,c:[0,0.394501280250e-1,0.236223735980e-4,-0.328589067840e-6,-0.499048287770e-8,-0.675090591730e-10,-0.574103274280e-12,-0.310888728940e-14,-0.104516093650e-16,-0.198892668780e-19,-0.163226974860e-22]},
+   {lo:0,hi:1372,c:[-0.176004136860e-1,0.389212049750e-1,0.185587700320e-4,-0.994575928740e-7,0.318409457190e-9,-0.560728448890e-12,0.560750590590e-15,-0.320207200030e-18,0.971511471520e-22,-0.121047212750e-25],
+    exp:{a0:0.118597600000e+0,a1:-0.118343200000e-3,a2:0.126968600000e+3}}]},
+ J:{min:-210,max:1200,segs:[
+   {lo:-210,hi:760,c:[0,0.503811878150e-1,0.304758369300e-4,-0.856810657200e-7,0.132281952950e-9,-0.170529583370e-12,0.209480906970e-15,-0.125383953360e-18,0.156317256970e-22]},
+   {lo:760,hi:1200,c:[0.296456256810e+3,-0.149761277860e+1,0.317871039240e-2,-0.318476867010e-5,0.157208190040e-8,-0.306913690560e-12]}]},
+ T:{min:-270,max:400,segs:[
+   {lo:-270,hi:0,c:[0,0.387481063640e-1,0.441944343470e-4,0.118443231050e-6,0.200329735540e-7,0.901380195590e-9,0.226511565930e-10,0.360711542050e-12,0.384939398830e-14,0.282135219250e-16,0.142515947790e-18,0.487686622860e-21,0.107955392700e-23,0.139450270620e-26,0.797951539270e-30]},
+   {lo:0,hi:400,c:[0,0.387481063640e-1,0.332922278800e-4,0.206182434040e-6,-0.218822568460e-8,0.109968809280e-10,-0.308157587720e-13,0.454791352900e-16,-0.275129016730e-19]}]},
+ E:{min:-270,max:1000,segs:[
+   {lo:-270,hi:0,c:[0,0.586655087080e-1,0.454109771240e-4,-0.779980486860e-6,-0.258001608430e-7,-0.594525830570e-9,-0.932140586670e-11,-0.102876055340e-12,-0.803701236210e-15,-0.439794973910e-17,-0.164147763550e-19,-0.396736195160e-22,-0.558273287210e-25,-0.346578420130e-28]},
+   {lo:0,hi:1000,c:[0,0.586655087100e-1,0.450322755820e-4,0.289084072120e-7,-0.330568966520e-9,0.650244032700e-12,-0.191974955040e-15,-0.125366004970e-17,0.214892175690e-20,-0.143880417820e-23,0.359608994810e-27]}]},
+ N:{min:-270,max:1300,segs:[
+   {lo:-270,hi:0,c:[0,0.261591059620e-1,0.109574842280e-4,-0.938411115540e-7,-0.464120397590e-10,-0.263033577160e-11,-0.226534380030e-13,-0.760893007910e-16,-0.934196678350e-19]},
+   {lo:0,hi:1300,c:[0,0.259293946010e-1,0.157101418800e-4,0.438256272370e-7,-0.252611697940e-9,0.643118193390e-12,-0.100634715190e-14,0.997453389920e-18,-0.608632456070e-21,0.208492293390e-24,-0.306821961510e-28]}]}
+};
+function tcE(t,type){
+ const d=TC[type]; if(t<d.min||t>d.max) return NaN;
+ const s=d.segs.find(s=>t>=s.lo&&t<=s.hi)||d.segs[d.segs.length-1];
+ let e=0; for(let i=0;i<s.c.length;i++) e+=s.c[i]*Math.pow(t,i);
+ if(s.exp) e+=s.exp.a0*Math.exp(s.exp.a1*Math.pow(t-s.exp.a2,2));
+ return e;
+}
+function tcT(mv,type){ const d=TC[type]; return bisect(t=>tcE(t,type)-mv,d.min,d.max); }
+/* cold-junction compensation: measured emf is hot minus cold */
+function tcTfromMeasured(mv,type,tcold){ return tcT(mv+tcE(tcold,type),type); }
+function tcEmeasured(thot,type,tcold){ return tcE(thot,type)-tcE(tcold,type); }
+
+
+/* ---------- helpers ---------- */
+function num(id){const v=parseFloat(document.getElementById(id).value);return isNaN(v)?null:v;}
+function set(id,v){document.getElementById(id).value=(v===null||!isFinite(v))?'':round(v,6);}
+function round(v,d){const f=Math.pow(10,d);return Math.round(v*f)/f;}
+function f(v,d){ if(v===null||v===undefined||!isFinite(v))return '—';
+  const a=Math.abs(v); if(a!==0&&(a<1e-4||a>=1e7))return v.toExponential(2);
+  return v.toFixed(d===undefined?3:d).replace(/(\.\d*?)0+$/,'$1').replace(/\.$/,''); }
+function kpi(k,v,s){return '<div class="kpi"><div class="k">'+k+'</div><div class="v">'+v+'</div>'+(s?'<div class="s">'+s+'</div>':'')+'</div>';}
+function within(e,tol){return Math.abs(e)<=tol+1e-9;}
+function pill(ok,t){return '<span class="pill '+(ok?'pass':'fail')+'">'+t+'</span>';}
+function showTab(id,btn){
+  ['t1','t2','t3','t4'].forEach(t=>document.getElementById(t).classList.toggle('hide',t!==id));
+  document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',b===btn?'true':'false'));
+  if(id==='t2') buildSheet();
+}
+function cfg(){const s=document.getElementById('sig').value;
+  return {s:s,S:SIG[s],mode:document.getElementById('mode').value,
+    lrv:num('lrv'),urv:num('urv'),eu:document.getElementById('eu').value||'',cut:num('cut')||0};}
+
+/* ---------- tab 1 ---------- */
+function calc1(src){
+  const c=cfg(); const sq=c.mode==='sqrt';
+  document.getElementById('cutWrap').style.display=sq?'':'none';
+  const S=document.getElementById('sum1'), E=document.getElementById('k1e');
+  if(c.lrv===null||c.urv===null||c.lrv===c.urv){S.textContent='Enter LRV and URV to begin.';E.innerHTML='';return;}
+  let pProc=null;
+  if(src==='pv'){const v=num('inPv'); if(v!==null) pProc=pvToPct(v,c.lrv,c.urv);}
+  else if(src==='pct'){const v=num('inPct'); if(v!==null) pProc=v/100;}
+  else if(src==='sig'){const v=num('inSig'); if(v!==null) pProc=xferInv(sigToPct(v,c.s),c.mode);}
+  else if(src==='sigpct'){const v=num('inSigPct'); if(v!==null) pProc=xferInv(v/100,c.mode);}
+  else { const v=num('inPv'); if(v!==null) pProc=pvToPct(v,c.lrv,c.urv); }
+  if(pProc===null){S.textContent='Enter a process value or a signal value.';E.innerHTML='';return;}
+  let pSig=xfer(pProc,c.mode);
+  let cutApplied=false;
+  if(sq&&c.cut>0&&pProc*100<c.cut){pSig=0;cutApplied=true;}
+  const pv=pctToPv(pProc,c.lrv,c.urv), sv=pctToSig(pSig,c.s);
+  if(src!=='pv')     set('inPv',pv);
+  if(src!=='pct')    set('inPct',pProc*100);
+  if(src!=='sig')    set('inSig',sv);
+  if(src!=='sigpct') set('inSigPct',pSig*100);
+  S.innerHTML=f(pv,4)+' '+c.eu+' <span>('+f(pProc*100,2)+' % of measuring span)</span>'
+    +' &nbsp;&#8594;&nbsp; '+f(sv,4)+' '+c.S.u+' <span>('+f(pSig*100,2)+' % of output span)</span>'
+    +' <span>&middot; '+(sq?'square root':'linear')+'</span>'
+    +(cutApplied?' <span>&middot; forced to zero by low-flow cutoff</span>':'');
+  document.getElementById('rangeEcho').value=c.S.lo+'\u2013'+c.S.hi+' '+c.S.u+'  |  '+f(c.lrv,4)+'\u2013'+f(c.urv,4)+' '+c.eu;
+  const act=num('actSig'), tol=num('tol1');
+  if(act===null){E.innerHTML='';return;}
+  const span=c.S.hi-c.S.lo;
+  const eSig=act-sv, ePctSpan=eSig/span*100;
+  const pProcA=xferInv(sigToPct(act,c.s),c.mode), pvA=pctToPv(pProcA,c.lrv,c.urv);
+  const ePv=pvA-pv, ePctRead=Math.abs(pv)>1e-12?ePv/pv*100:null;
+  let h=kpi('Error',f(eSig,4)+' '+c.S.u,'signal domain')
+       +kpi('% of span',f(ePctSpan,3)+' %',f(ePv,4)+' '+c.eu)
+       +kpi('% of reading',ePctRead===null?'\u2014':f(ePctRead,3)+' %',ePctRead===null?'zero process value':'at '+f(pv,4)+' '+c.eu);
+  if(tol!==null){const ok=within(ePctSpan,tol); h+=kpi('Verdict',pill(ok,ok?'PASS':'FAIL'),'tolerance \u00b1'+f(tol,3)+' % span');}
+  E.innerHTML=h;
+}
+
+/* ---------- tab 2 ---------- */
+const PTS=[0,25,50,75,100];
+function buildSheet(){
+  const c=cfg(); const b=document.getElementById('sheetBody');
+  if(c.lrv===null||c.urv===null)return;
+  document.getElementById('rangeEcho').value=c.S.lo+'–'+c.S.hi+' '+c.S.u+'  |  '+f(c.lrv,4)+'–'+f(c.urv,4)+' '+c.eu;
+  if(b.dataset.built==='1'){calc2();return;}
+  b.innerHTML=PTS.map((p,i)=>'<tr>'
+    +'<td class="num">'+p+' %</td><td class="num" id="pv'+i+'"></td><td class="num" id="id'+i+'"></td>'
+    +['afu','afd','alu','ald'].map(k=>'<td><input type="number" step="any" id="'+k+i+'" oninput="calc2()"></td>').join('')
+    +'<td class="num big" id="mx'+i+'"></td><td id="vd'+i+'"></td></tr>').join('');
+  b.dataset.built='1'; calc2();
+}
+function clearSheet(){PTS.forEach((p,i)=>['afu','afd','alu','ald'].forEach(k=>document.getElementById(k+i).value=''));calc2();}
+function calc2(){
+  const c=cfg(); if(c.lrv===null||c.urv===null)return;
+  const span=c.S.hi-c.S.lo, tol=num('tol2');
+  let mxAF=0,mxAL=0,hysAF=0,hysAL=0,lin=0,anyAF=false,anyAL=false,fails=[];
+  PTS.forEach((p,i)=>{
+    const pr=p/100, pv=pctToPv(pr,c.lrv,c.urv), ideal=pctToSig(xfer(pr,c.mode),c.s);
+    document.getElementById('pv'+i).textContent=f(pv,4)+' '+c.eu;
+    document.getElementById('id'+i).textContent=f(ideal,4)+' '+c.S.u;
+    const v={}; ['afu','afd','alu','ald'].forEach(k=>{v[k]=num(k+i);});
+    const e={}; let mx=null;
+    ['afu','afd','alu','ald'].forEach(k=>{ if(v[k]!==null){ e[k]=(v[k]-ideal)/span*100;
+      if(mx===null||Math.abs(e[k])>Math.abs(mx)) mx=e[k]; }});
+    if(e.afu!==undefined||e.afd!==undefined){anyAF=true;
+      [e.afu,e.afd].forEach(x=>{if(x!==undefined)mxAF=Math.max(mxAF,Math.abs(x));});
+      if(e.afu!==undefined&&e.afd!==undefined)hysAF=Math.max(hysAF,Math.abs(e.afu-e.afd));}
+    if(e.alu!==undefined||e.ald!==undefined){anyAL=true;
+      [e.alu,e.ald].forEach(x=>{if(x!==undefined)mxAL=Math.max(mxAL,Math.abs(x));});
+      if(e.alu!==undefined&&e.ald!==undefined)hysAL=Math.max(hysAL,Math.abs(e.alu-e.ald));
+      if(e.alu!==undefined)lin=Math.max(lin,Math.abs(e.alu));}
+    document.getElementById('mx'+i).textContent=mx===null?'—':f(mx,3)+' %';
+    const vd=document.getElementById('vd'+i);
+    if(mx===null||tol===null){vd.innerHTML='';}
+    else {const ok=within(mx,tol); vd.innerHTML=pill(ok,ok?'PASS':'FAIL'); if(!ok)fails.push(p+' %');}
+  });
+  let h=kpi('Max as-found',anyAF?f(mxAF,3)+' %':'—','% of span')
+       +kpi('Max as-left',anyAL?f(mxAL,3)+' %':'—','% of span')
+       +kpi('Hysteresis',anyAL?f(hysAL,3)+' %':(anyAF?f(hysAF,3)+' %':'—'),anyAL?'as left, up vs down':'as found, up vs down')
+       +kpi('Linearity',anyAL?f(lin,3)+' %':'—','max dev., as-left up');
+  document.getElementById('k2').innerHTML=h;
+  const V=document.getElementById('v2');
+  if(tol===null||(!anyAF&&!anyAL)){V.innerHTML='';return;}
+  const ref=anyAL?mxAL:mxAF, lbl=anyAL?'as-left':'as-found';
+  V.innerHTML=within(ref,tol)
+    ? '<div class="okbox"><strong>Within tolerance.</strong> Largest '+lbl+' error '+f(ref,3)+' % of span against a limit of ±'+f(tol,3)+' %.</div>'
+    : '<div class="warnbox"><strong>Out of tolerance at '+fails.join(', ')+'.</strong> Largest '+lbl+' error '+f(ref,3)+' % of span against a limit of ±'+f(tol,3)+' %.</div>';
+}
+
+/* ---------- tab 3 ---------- */
+function calc3(){
+  const vs=num('vs'),vt=num('vt'),im=num('imax'),rs=num('rsense')||0,rw=num('rwire')||0,ro=num('rother')||0;
+  const K=document.getElementById('k3'),V=document.getElementById('v3');
+  if(vs===null||vt===null||im===null||im<=0){K.innerHTML='';V.innerHTML='';return;}
+  const rmax=(vs-vt)/(im/1000), rtot=rs+rw+ro, vdrop=rtot*im/1000, vat=vs-vdrop, head=rmax-rtot;
+  const ok=rtot<=rmax, hart=document.getElementById('hart').value==='1';
+  K.innerHTML=kpi('Max allowable load',f(rmax,1)+' Ω','at '+f(im,1)+' mA')
+    +kpi('Actual burden',f(rtot,1)+' Ω',f(rs,1)+' + '+f(rw,1)+' + '+f(ro,1)+' Ω')
+    +kpi('V at transmitter',f(vat,2)+' V','needs ≥ '+f(vt,2)+' V')
+    +kpi('Headroom',f(head,1)+' Ω',pill(ok,ok?'COMPLIANT':'OVER BURDEN'));
+  let m='';
+  if(!ok) m+='<div class="warnbox"><strong>Loop will not drive full scale.</strong> Burden exceeds the maximum by '+f(-head,1)+' Ω. '
+    +'Raise the supply to at least '+f(vt+rtot*im/1000,2)+' V, or reduce load resistance.</div>';
+  if(hart&&rs<250) m+='<div class="warnbox"><strong>HART needs more loop resistance.</strong> '
+    +'Sense resistance is '+f(rs,1)+' Ω; HART communication normally requires at least 250 Ω.</div>';
+  if(ok&&(!hart||rs>=250)) m+='<div class="okbox"><strong>Loop is compliant.</strong> '+f(head,1)+' Ω of margin at '+f(im,1)+' mA'
+    +(hart?', and sense resistance meets the 250 Ω HART minimum.':'.')+'</div>';
+  V.innerHTML=m;
+}
+
+/* ---------- tab 4 ---------- */
+function calc4(src){
+  const s=document.getElementById('sensor').value, isR=s.indexOf('PT')===0;
+  document.getElementById('cjWrap').style.display=isR?'none':'';
+  document.getElementById('sOutLbl').textContent=isR?'Output (Ω)':'Output (mV)';
+  const cj=num('cj')||0, lo=num('sLrv'), hi=num('sUrv');
+  const r0=s==='PT1000'?1000:100;
+  let t=null,out=null;
+  if(src==='o'){ const o=num('sOut'); if(o!==null){ out=o; t=isR?rtdT(o,r0):tcTfromMeasured(o,s,cj);} }
+  else { t=num('sT'); if(t!==null) out=isR?rtdR(t,r0):tcEmeasured(t,s,cj); }
+  const K=document.getElementById('k4'),N=document.getElementById('n4');
+  const lim=isR?{min:-200,max:850}:{min:TC[s].min,max:TC[s].max};
+  N.textContent='Valid range for this sensor: '+lim.min+' °C to '+lim.max+' °C.'
+    +(isR?'':' Output is the emf actually seen at the instrument terminals, i.e. hot junction minus cold junction.');
+  if(t===null||out===null||!isFinite(t)||!isFinite(out)){K.innerHTML='';return;}
+  if(src==='o'){ set('sT',t); } else { set('sOut',out); }
+  let extra='';
+  if(lo!==null&&hi!==null&&lo!==hi){
+    const p=(t-lo)/(hi-lo), ma=4+p*16;
+    extra=kpi('4–20 mA output',f(ma,4)+' mA',f(p*100,2)+' % of '+f(lo,1)+'–'+f(hi,1)+' °C');
+  }
+  K.innerHTML=kpi('Temperature',f(t,3)+' °C',isR?'from resistance':'hot junction, CJ at '+f(cj,1)+' °C')
+    +kpi('Output',f(out,isR?4:4)+(isR?' Ω':' mV'),isR?'Pt'+r0+', IEC 60751':'type '+s+', NIST ITS-90')
+    +extra
+    +((t<lim.min||t>lim.max)?kpi('Range',pill(false,'OUT OF RANGE'),lim.min+' to '+lim.max+' °C'):'');
+}
+document.getElementById('inPv').value='125';
+calc1('pv'); calc3(); calc4();
+</script>
+</body>
+</html>
