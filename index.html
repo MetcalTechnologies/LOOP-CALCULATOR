@@ -91,63 +91,51 @@
   </div>
   <!-- ============ TAB 1 : SIGNAL & PROCESS ============ -->
   <div class="card" id="t1">
-    <h2>Process variable &harr; signal</h2>
-    <div class="pair">
-      <div class="side">
-        <h3>Process variable</h3><p class="sub">what the instrument measures</p>
-        <div class="row" style="margin-bottom:12px;">
-          <div class="field"><label for="eu">Engineering unit</label><input id="eu" value="kPa" oninput="calc1()"></div>
-          <div class="field"><label for="lrv">LRV (0 %)</label><input type="number" step="any" id="lrv" value="0" oninput="calc1()"></div>
-          <div class="field"><label for="urv">URV (100 %)</label><input type="number" step="any" id="urv" value="250" oninput="calc1()"></div>
-        </div>
-        <div class="row" style="margin-bottom:12px;">
-          <div class="field"><label for="inPv">Value</label><input type="number" step="any" id="inPv" placeholder="e.g. 125" oninput="calc1('pv')"></div>
-          <div class="field"><label for="inPct">% of measuring span</label><input type="number" step="any" id="inPct" placeholder="e.g. 50" oninput="calc1('pct')"></div>
-        </div>
-      </div>
-
-      <div class="mid">
-        <div class="field"><label for="mode">Transfer function</label>
-          <select id="mode" onchange="calc1()">
-            <option value="lin" selected>Linear</option>
-            <option value="sqrt">Square root</option>
-          </select></div>
-        <div class="arrow">&#8646;</div>
-        <div class="field" id="cutWrap" style="display:none;"><label for="cut">Low-flow cutoff (%)</label>
-          <input type="number" step="any" id="cut" value="0" oninput="calc1()"></div>
-      </div>
-
-      <div class="side">
-        <h3>Signal</h3><p class="sub">what the transmitter outputs</p>
-        <div class="row" style="margin-bottom:12px;">
-          <div class="field"><label for="sig">Signal range</label>
-            <select id="sig" onchange="calc1()">
-              <option value="4-20mA" selected>4&ndash;20 mA</option>
-              <option value="0-20mA">0&ndash;20 mA</option>
-              <option value="1-5V">1&ndash;5 V</option>
-              <option value="0-5V">0&ndash;5 V</option>
-              <option value="0-10V">0&ndash;10 V</option>
-              <option value="3-15psi">3&ndash;15 psi</option>
-            </select></div>
-        </div>
-        <div class="row" style="margin-bottom:12px;">
-          <div class="field"><label for="inSig">Value</label><input type="number" step="any" id="inSig" placeholder="e.g. 12" oninput="calc1('sig')"></div>
-          <div class="field"><label for="inSigPct">% of output span</label><input type="number" step="any" id="inSigPct" placeholder="e.g. 50" oninput="calc1('sigpct')"></div>
-        </div>
-      </div>
+    <h2>Signal &harr; process</h2>
+    <div class="row" style="margin-bottom:12px;">
+      <div class="field"><label for="sig">Signal range</label>
+        <select id="sig" onchange="calc1()">
+          <option value="4-20mA" selected>4&ndash;20 mA</option>
+          <option value="0-20mA">0&ndash;20 mA</option>
+          <option value="1-5V">1&ndash;5 V</option>
+          <option value="0-5V">0&ndash;5 V</option>
+          <option value="0-10V">0&ndash;10 V</option>
+          <option value="3-15psi">3&ndash;15 psi</option>
+        </select></div>
+      <div class="field"><label for="mode">Transfer function</label>
+        <select id="mode" onchange="calc1()">
+          <option value="lin" selected>Linear</option>
+          <option value="sqrt">Square root</option>
+        </select></div>
+      <div class="field" id="cutWrap" style="display:none;"><label for="cut">Low-flow cutoff (%)</label>
+        <input type="number" step="any" id="cut" value="0" oninput="calc1()"></div>
+    </div>
+    <div class="row" style="margin-bottom:12px;">
+      <div class="field"><label for="lrv">Min. range (0 %)</label><input type="number" step="any" id="lrv" value="0" oninput="calc1()"></div>
+      <div class="field"><label for="urv">Max. range (100 %)</label><input type="number" step="any" id="urv" value="250" oninput="calc1()"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label for="inPv">Process value</label><input type="number" step="any" id="inPv" placeholder="e.g. 125" oninput="calc1('pv')"></div>
+      <div class="field"><label for="inPct">% of measuring span</label><input type="number" step="any" id="inPct" placeholder="e.g. 50" oninput="calc1('pct')"></div>
+      <div class="field"><label for="inSig">Signal</label><input type="number" step="any" id="inSig" placeholder="e.g. 12" oninput="calc1('sig')"></div>
+      <div class="field"><label for="inSigPct">% of output span</label><input type="number" step="any" id="inSigPct" placeholder="e.g. 50" oninput="calc1('sigpct')"></div>
     </div>
     <div class="summary" id="sum1"></div>
-    <p class="hint">Type in any one box &mdash; the rest follow. With a linear transfer function the two &ldquo;% of span&rdquo; figures are equal; with square root they are not, which is the whole point of the setting.</p>
+    <p class="hint">Type in any one box &mdash; the rest follow. With a linear transfer function the two percentages are equal; with square root they are not, which is the point of the setting.</p>
 
     <h2 style="margin-top:22px;">Error at this point</h2>
     <div class="row">
       <div class="field"><label for="actSig">Actual signal read</label><input type="number" step="any" id="actSig" placeholder="e.g. 12.08" oninput="calc1()"></div>
-      <div class="field"><label for="tol1">Tolerance (% span)</label><input type="number" step="any" id="tol1" value="0.5" oninput="calc1()"></div>
+      <div class="field"><label for="tol1">Tolerance</label><input type="number" step="any" id="tol1" value="0.5" oninput="calc1()"></div>
+      <div class="field"><label for="tolBasis">Tolerance basis</label>
+        <select id="tolBasis" onchange="calc1()">
+          <option value="span" selected>% of span</option>
+          <option value="read">% of reading</option>
+        </select></div>
     </div>
     <div class="out" id="k1e"></div>
-    <p class="note">% of span uses the full output span. % of reading uses the process value at that point, so it grows without limit near the bottom of the range &mdash; below about 10 % of span it is rarely a meaningful way to state error.</p>
+    <p class="note">The ideal signal is what the transmitter should produce for the process value above, so the error is the difference between that and what you actually read. % of reading grows without limit near the bottom of the range &mdash; below about 10 % of span it is rarely a meaningful way to state error, which is why most transmitter specifications are written as % of span.</p>
   </div>
-
   <!-- ============ TAB 2 : 5-POINT ============ -->
   <div class="card hide" id="t2">
     <h2>Five-point calibration &mdash; as found / as left</h2>
@@ -298,14 +286,14 @@ function showTab(id,btn){
 }
 function cfg(){const s=document.getElementById('sig').value;
   return {s:s,S:SIG[s],mode:document.getElementById('mode').value,
-    lrv:num('lrv'),urv:num('urv'),eu:document.getElementById('eu').value||'',cut:num('cut')||0};}
+    lrv:num('lrv'),urv:num('urv'),eu:'',cut:num('cut')||0};}
 
 /* ---------- tab 1 ---------- */
 function calc1(src){
   const c=cfg(); const sq=c.mode==='sqrt';
   document.getElementById('cutWrap').style.display=sq?'':'none';
   const S=document.getElementById('sum1'), E=document.getElementById('k1e');
-  if(c.lrv===null||c.urv===null||c.lrv===c.urv){S.textContent='Enter LRV and URV to begin.';E.innerHTML='';return;}
+  if(c.lrv===null||c.urv===null||c.lrv===c.urv){S.textContent='Enter the minimum and maximum of the measuring range.';E.innerHTML='';return;}
   let pProc=null;
   if(src==='pv'){const v=num('inPv'); if(v!==null) pProc=pvToPct(v,c.lrv,c.urv);}
   else if(src==='pct'){const v=num('inPct'); if(v!==null) pProc=v/100;}
@@ -313,32 +301,36 @@ function calc1(src){
   else if(src==='sigpct'){const v=num('inSigPct'); if(v!==null) pProc=xferInv(v/100,c.mode);}
   else { const v=num('inPv'); if(v!==null) pProc=pvToPct(v,c.lrv,c.urv); }
   if(pProc===null){S.textContent='Enter a process value or a signal value.';E.innerHTML='';return;}
-  let pSig=xfer(pProc,c.mode);
-  let cutApplied=false;
+  let pSig=xfer(pProc,c.mode); let cutApplied=false;
   if(sq&&c.cut>0&&pProc*100<c.cut){pSig=0;cutApplied=true;}
   const pv=pctToPv(pProc,c.lrv,c.urv), sv=pctToSig(pSig,c.s);
   if(src!=='pv')     set('inPv',pv);
   if(src!=='pct')    set('inPct',pProc*100);
   if(src!=='sig')    set('inSig',sv);
   if(src!=='sigpct') set('inSigPct',pSig*100);
-  S.innerHTML=f(pv,4)+' '+c.eu+' <span>('+f(pProc*100,2)+' % of measuring span)</span>'
+  S.innerHTML=f(pv,4)+' <span>('+f(pProc*100,2)+' % of measuring span)</span>'
     +' &nbsp;&#8594;&nbsp; '+f(sv,4)+' '+c.S.u+' <span>('+f(pSig*100,2)+' % of output span)</span>'
     +' <span>&middot; '+(sq?'square root':'linear')+'</span>'
     +(cutApplied?' <span>&middot; forced to zero by low-flow cutoff</span>':'');
-  document.getElementById('rangeEcho').value=c.S.lo+'\u2013'+c.S.hi+' '+c.S.u+'  |  '+f(c.lrv,4)+'\u2013'+f(c.urv,4)+' '+c.eu;
-  const act=num('actSig'), tol=num('tol1');
+  document.getElementById('rangeEcho').value=c.S.lo+'\u2013'+c.S.hi+' '+c.S.u+'  |  '+f(c.lrv,4)+'\u2013'+f(c.urv,4);
+  const act=num('actSig'), tol=num('tol1'), basis=document.getElementById('tolBasis').value;
   if(act===null){E.innerHTML='';return;}
   const span=c.S.hi-c.S.lo;
   const eSig=act-sv, ePctSpan=eSig/span*100;
   const pProcA=xferInv(sigToPct(act,c.s),c.mode), pvA=pctToPv(pProcA,c.lrv,c.urv);
   const ePv=pvA-pv, ePctRead=Math.abs(pv)>1e-12?ePv/pv*100:null;
-  let h=kpi('Error',f(eSig,4)+' '+c.S.u,'signal domain')
-       +kpi('% of span',f(ePctSpan,3)+' %',f(ePv,4)+' '+c.eu)
-       +kpi('% of reading',ePctRead===null?'\u2014':f(ePctRead,3)+' %',ePctRead===null?'zero process value':'at '+f(pv,4)+' '+c.eu);
-  if(tol!==null){const ok=within(ePctSpan,tol); h+=kpi('Verdict',pill(ok,ok?'PASS':'FAIL'),'tolerance \u00b1'+f(tol,3)+' % span');}
+  let h=kpi('Ideal signal',f(sv,4)+' '+c.S.u,'for '+f(pv,4))
+       +kpi('Error',f(eSig,4)+' '+c.S.u,f(ePv,4)+' in process terms')
+       +kpi('% of span',f(ePctSpan,3)+' %','of the '+c.S.lo+'\u2013'+c.S.hi+' '+c.S.u+' output span')
+       +kpi('% of reading',ePctRead===null?'\u2014':f(ePctRead,3)+' %',ePctRead===null?'zero process value':'at '+f(pv,4));
+  if(tol!==null){
+    const cmp=(basis==='read')?ePctRead:ePctSpan;
+    if(cmp===null) h+=kpi('Verdict','\u2014','% of reading is undefined at zero');
+    else { const ok=within(cmp,tol);
+      h+=kpi('Verdict',pill(ok,ok?'PASS':'FAIL'),'\u00b1'+f(tol,3)+' % of '+(basis==='read'?'reading':'span')); }
+  }
   E.innerHTML=h;
 }
-
 /* ---------- tab 2 ---------- */
 const PTS=[0,25,50,75,100];
 function buildSheet(){
