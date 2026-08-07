@@ -115,10 +115,10 @@
       <div class="field"><label for="urv">Max. range (100 %)</label><input type="number" step="any" id="urv" value="250" oninput="calc1()"></div>
     </div>
     <div class="row">
-      <div class="field"><label for="inPv">Process value</label><input type="number" step="any" id="inPv" placeholder="e.g. 125" oninput="calc1('pv')"></div>
-      <div class="field"><label for="inPct">% of measuring span</label><input type="number" step="any" id="inPct" placeholder="e.g. 50" oninput="calc1('pct')"></div>
-      <div class="field"><label for="inSig">Signal</label><input type="number" step="any" id="inSig" placeholder="e.g. 12" oninput="calc1('sig')"></div>
-      <div class="field"><label for="inSigPct">% of output span</label><input type="number" step="any" id="inSigPct" placeholder="e.g. 50" oninput="calc1('sigpct')"></div>
+      <div class="field"><label for="inPv">Nominal point or value</label><input type="number" step="any" id="inPv" placeholder="e.g. 125" oninput="calc1('pv')"></div>
+      <div class="field"><label for="inPct">% of span</label><input type="number" step="any" id="inPct" placeholder="e.g. 50" oninput="calc1('pct')"></div>
+      <div class="field"><label for="inSig" id="sigLabel">Signal</label><input type="number" step="any" id="inSig" placeholder="e.g. 12" oninput="calc1('sig')"></div>
+      <div class="field" id="sigPctWrap" style="display:none;"><label for="inSigPct">% of output span</label><input type="number" step="any" id="inSigPct" placeholder="e.g. 50" oninput="calc1('sigpct')"></div>
     </div>
     <div class="summary" id="sum1"></div>
     <p class="hint">Type in any one box &mdash; the rest follow. With a linear transfer function the two percentages are equal; with square root they are not, which is the point of the setting.</p>
@@ -292,6 +292,8 @@ function cfg(){const s=document.getElementById('sig').value;
 function calc1(src){
   const c=cfg(); const sq=c.mode==='sqrt';
   document.getElementById('cutWrap').style.display=sq?'':'none';
+  document.getElementById('sigPctWrap').style.display=sq?'':'none';
+  document.getElementById('sigLabel').textContent='Signal ('+c.S.lo+'–'+c.S.hi+' '+c.S.u+')';
   const S=document.getElementById('sum1'), E=document.getElementById('k1e');
   if(c.lrv===null||c.urv===null||c.lrv===c.urv){S.textContent='Enter the minimum and maximum of the measuring range.';E.innerHTML='';return;}
   let pProc=null;
